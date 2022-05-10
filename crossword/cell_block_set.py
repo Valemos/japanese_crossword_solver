@@ -2,14 +2,14 @@ from copy import deepcopy
 import hashlib
 
 from crossword.cell_block import CellBlock
-from crossword.block_direction import BlockDirection
+from crossword.block_direction import Direction
 
 
 class CellBlockSet:
     """block set maintains at least one empty cell between all blocks"""
 
     def __init__(self, position, direction, lengths: list):
-        self._blocks = [CellBlock(position, lengths[0])]
+        self._blocks = [CellBlock(0, lengths[0])]
         for length in lengths[1:]:
             new_cell_start = self._blocks[-1].last_position + 2
             new_cell = CellBlock(new_cell_start, length)
@@ -18,18 +18,22 @@ class CellBlockSet:
         self._max_length = float("inf")
         self.position = position
         self.direction = direction
+        self.is_fixed = False
 
     def __str__(self):
+        empty_char = '_'
+        active_char = '0'
+
         gaps = [self._blocks[0].position]
         for b1, b2 in zip(self._blocks, self._blocks[1:]):
             gaps.append((b2.position - b1.last_position - 1))
-        gaps = list('-' * ln for ln in gaps)
+        gaps = list(empty_char * ln for ln in gaps)
         if self._max_length != float("inf"):
-            gaps.append('-' * (self._max_length - self.length))
+            gaps.append(empty_char * (self._max_length - self.length))
         else:
             gaps.append('')
 
-        block_strings = list(map(lambda b: '0' * b.length, self._blocks))
+        block_strings = list(map(lambda b: active_char * b.length, self._blocks))
 
         result = gaps.pop(0)
         for b_string, gap in zip(block_strings, gaps):
@@ -50,6 +54,11 @@ class CellBlockSet:
                     self.position == other.position and \
                     self.direction == other.direction
 
+    @property
+    def lengths(self):
+        for b in self._blocks:
+            yield b.length
+
     def set_max_length(self, length):
         self._max_length = length
 
@@ -65,7 +74,7 @@ class CellBlockSet:
             return 0
 
     def contains_point(self, col, row):
-        if self.direction == BlockDirection.VERTICAL:
+        if self.direction == Direction.VERTICAL:
             pos = col
         else:
             pos = row
@@ -115,3 +124,8 @@ class CellBlockSet:
             return False
 
         return True
+
+    def iter_positions(self):
+        for block in self._blocks:
+            max_value = min(block.last_position, self._max_length)
+            yield from range(block.position, max_value + 1)

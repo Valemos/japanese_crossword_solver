@@ -1,6 +1,6 @@
 import enum
 
 
-class BlockDirection(enum.Enum):
+class Direction(enum.Enum):
     HORIZONTAL = 0
     VERTICAL = 1
