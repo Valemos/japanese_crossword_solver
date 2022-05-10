@@ -2,7 +2,7 @@ import numpy as np
 
 import parse_crossword
 from crossword.cell_block import CellBlock
-from crossword.block_direction import Direction
+from crossword.direction import Direction
 from crossword.cell_block_set import CellBlockSet
 from crossword.crossword_hints import CrosswordHintsHorizontal, CrosswordHintsVertical
 from crossword.crossword_solution import CrosswordSolution

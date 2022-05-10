@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-from crossword.block_direction import Direction
+from crossword.direction import Direction
 
 
 @dataclass
@@ -48,6 +48,7 @@ class CrosswordHintsHorizontal(ACrosswordHints):
                 current_value += 1
             elif current_value != 0:
                 yield current_value
+                current_value = 0
         if current_value != 0:
             yield current_value
 

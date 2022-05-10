@@ -5,7 +5,7 @@ import numpy as np
 
 import copy
 
-from .block_direction import Direction
+from .direction import Direction
 from .cell_block_set import CellBlockSet
 from .crossword_cell import CrosswordCell
 from .crossword_hints import CrosswordHintsVertical, CrosswordHintsHorizontal
@@ -118,7 +118,7 @@ class CrosswordSolution:
         return f"{col_hints}\n{all_rows}"
 
     def reset(self):
-        self._solution = np.zeros(self._solution.shape)
+        return CrosswordSolution.from_hints(self._h_hints, self._v_hints)
 
     @property
     def movable_columns(self) -> Generator:
@@ -127,6 +127,7 @@ class CrosswordSolution:
                 yield col
 
     def is_solved(self):
+        if self.is_invalid(): return False
         current_h_hints = CrosswordHintsHorizontal.scan_array(self._solution)
         return self._h_hints == current_h_hints
 
@@ -137,7 +138,7 @@ class CrosswordSolution:
 
     def is_invalid(self):
         """checks if current crossword cannot exist"""
-        for row_i, row_hint in self._h_hints.hints:
+        for row_i, row_hint in enumerate(self._h_hints.hints):
             scanned_hint = CrosswordHintsHorizontal.scan_row(self._solution, row_i)
             if any(map(lambda tup: tup[0] != tup[1], zip(row_hint, scanned_hint))):
                 return True

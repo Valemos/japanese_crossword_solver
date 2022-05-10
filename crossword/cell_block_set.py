@@ -2,7 +2,7 @@ from copy import deepcopy
 import hashlib
 
 from crossword.cell_block import CellBlock
-from crossword.block_direction import Direction
+from crossword.direction import Direction
 
 
 class CellBlockSet:
@@ -81,7 +81,8 @@ class CellBlockSet:
         return any(block.contains_position(pos) for block in self._blocks)
 
     def get_permutations(self):
-        return self.iter_permutations()
+        permutations = {str(pr): pr for pr in self.iter_permutations()}
+        return permutations.values()
 
     def iter_permutations(self, fixed_blocks=None):
         if fixed_blocks is None:
